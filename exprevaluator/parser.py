@@ -120,5 +120,5 @@ class SyntaxTree:
     @staticmethod
     def parse(text, logger=None):
         logger = logger or logging.getLogger(__name__)
-        parser = Parser(text)
+        parser = Parser(text, logger)
         return parser.parse()
