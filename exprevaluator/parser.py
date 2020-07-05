@@ -61,6 +61,28 @@ class Parser:
                 (f"""Unexpected token '{self._current().syntaxkind}', expected '{syntaxkind}'""", logging.ERROR))
             return SyntaxToken(syntaxkind, self._current().position, None, None)
 
+    def _get_binary_operator_precedence(self, syntaxkind):
+        if (syntaxkind == SyntaxKind.StarToken or
+                syntaxkind == SyntaxKind.SlashToken):
+            return 2
+        elif (syntaxkind == SyntaxKind.PlusToken or
+                syntaxkind == SyntaxKind.MinusToken):
+            return 1
+        else:
+            return 0
+
+    def _parse_expression(self, parent_precedence=0):
+        left = self._parse_primary_expression()
+        while True:
+            precedence = self._get_binary_operator_precedence(self._current().syntaxkind)
+            if precedence == 0 or precedence <= parent_precedence:
+                break
+            else:
+                operatortoken = self._next_token()
+                right = self._parse_expression(precedence)
+                left = BinaryExpressionSyntax(left, operatortoken, right)
+        return left
+
     def _parse_primary_expression(self):
         if self._current().syntaxkind == SyntaxKind.OpenParenthesisToken:
             left = self._next_token()
@@ -70,31 +92,6 @@ class Parser:
         else:
             numbertoken = self._match_token(SyntaxKind.NumberToken)
             return LiteralExpressionSyntax(numbertoken)
-
-    def _parse_factor(self):
-        left = self._parse_primary_expression()
-
-        while (self._current().syntaxkind == SyntaxKind.StarToken or
-               self._current().syntaxkind == SyntaxKind.SlashToken):
-            operatortoken = self._next_token()
-            right = self._parse_primary_expression()
-            left = BinaryExpressionSyntax(left, operatortoken, right)
-
-        return left
-
-    def _parse_term(self):
-        left = self._parse_factor()
-
-        while (self._current().syntaxkind == SyntaxKind.PlusToken or
-               self._current().syntaxkind == SyntaxKind.MinusToken):
-            operatortoken = self._next_token()
-            right = self._parse_factor()
-            left = BinaryExpressionSyntax(left, operatortoken, right)
-
-        return left
-
-    def _parse_expression(self):
-        return self._parse_term()
 
     def _parse(self):
         expression = self._parse_expression()
