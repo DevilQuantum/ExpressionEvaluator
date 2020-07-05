@@ -25,7 +25,7 @@ class Parser:
     def _lex(self, text):
         lexer = Lexer(text)
         while True:
-            token = lexer.next_token()
+            token = lexer.lex_token()
             if (token.syntaxkind != SyntaxKind.WhiteSpaceToken and
                     token.syntaxkind != token.syntaxkind.BadToken):
                 self._tokens.append(token)

@@ -19,7 +19,7 @@ class Lexer:
         else:
             return self.text[self._position]
 
-    def next_token(self):
+    def lex_token(self):
         start_position = self._position
 
         if self._current_char() == '\0':
