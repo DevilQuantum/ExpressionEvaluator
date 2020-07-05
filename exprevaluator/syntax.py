@@ -14,7 +14,7 @@ class SyntaxKind(Enum):
     OpenParenthesisToken = 9,
     CloseParenthesisToken = 10,
 
-    NumberExpression = 11,
+    LiteralExpression = 11,
     BinaryExpression = 12,
     ParenthesizedExpression = 13
 
@@ -53,7 +53,7 @@ class ExpressionSyntax(SyntaxNode):
 class LiteralExpressionSyntax(ExpressionSyntax):
 
     def __init__(self, literaltoken):
-        super().__init__(SyntaxKind.NumberExpression)
+        super().__init__(SyntaxKind.LiteralExpression)
         self.literaltoken = literaltoken
 
     def get_children(self):
