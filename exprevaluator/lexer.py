@@ -46,7 +46,7 @@ class Lexer:
                 self._next()
 
             string = self.text[start_position:self._position]
-            return SyntaxToken(SyntaxKind.SpaceToken, start_position, string, None)
+            return SyntaxToken(SyntaxKind.WhiteSpaceToken, start_position, string, None)
 
         elif self._current_char() == '+':
             self._next()

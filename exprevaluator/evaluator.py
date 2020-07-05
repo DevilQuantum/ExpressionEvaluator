@@ -1,4 +1,4 @@
-from .syntax import SyntaxKind, NumberExpressionSyntax, BinaryExpressionSyntax, \
+from .syntax import SyntaxKind, LiteralExpressionSyntax, BinaryExpressionSyntax, \
     ParenthesizedExpressionSyntax
 
 
@@ -11,8 +11,8 @@ class Evaluator:
         return self.evaluate_expression(self.root)
 
     def evaluate_expression(self, node):
-        if isinstance(node, NumberExpressionSyntax):
-            return int(node.numbertoken.value)
+        if isinstance(node, LiteralExpressionSyntax):
+            return int(node.literaltoken.value)
 
         elif isinstance(node, BinaryExpressionSyntax):
             left = self.evaluate_expression(node.left)

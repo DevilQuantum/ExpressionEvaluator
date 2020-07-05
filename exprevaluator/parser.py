@@ -4,7 +4,7 @@ from .lexer import Lexer
 from .syntax import (
     SyntaxKind,
     SyntaxToken,
-    NumberExpressionSyntax,
+    LiteralExpressionSyntax,
     BinaryExpressionSyntax,
     ParenthesizedExpressionSyntax
 )
@@ -26,7 +26,7 @@ class Parser:
         lexer = Lexer(text)
         while True:
             token = lexer.next_token()
-            if (token.syntaxkind != SyntaxKind.SpaceToken and
+            if (token.syntaxkind != SyntaxKind.WhiteSpaceToken and
                     token.syntaxkind != token.syntaxkind.BadToken):
                 self._tokens.append(token)
             if token.syntaxkind == SyntaxKind.EndOfFileToken:
@@ -53,26 +53,23 @@ class Parser:
         self._position += 1
         return current
 
-    def _match(self, syntaxkind):
+    def _match_token(self, syntaxkind):
         if self._current().syntaxkind == syntaxkind:
             return self._next_token()
         else:
             self.diagnostics.append(
-                (f"""Unexpected token '{self._current().syntaxkind}'', expected '{syntaxkind}'""", logging.ERROR))
+                (f"""Unexpected token '{self._current().syntaxkind}', expected '{syntaxkind}'""", logging.ERROR))
             return SyntaxToken(syntaxkind, self._current().position, None, None)
-
-    def _parse_expression(self):
-        return self._parse_term()
 
     def _parse_primary_expression(self):
         if self._current().syntaxkind == SyntaxKind.OpenParenthesisToken:
             left = self._next_token()
             expression = self._parse_expression()
-            right = self._match(SyntaxKind.CloseParenthesisToken)
+            right = self._match_token(SyntaxKind.CloseParenthesisToken)
             return ParenthesizedExpressionSyntax(left, expression, right)
         else:
-            numbertoken = self._match(SyntaxKind.NumberToken)
-            return NumberExpressionSyntax(numbertoken)
+            numbertoken = self._match_token(SyntaxKind.NumberToken)
+            return LiteralExpressionSyntax(numbertoken)
 
     def _parse_factor(self):
         left = self._parse_primary_expression()
@@ -96,9 +93,12 @@ class Parser:
 
         return left
 
+    def _parse_expression(self):
+        return self._parse_term()
+
     def _parse(self):
-        expression = self._parse_term()
-        end_of_file_token = self._match(SyntaxKind.EndOfFileToken)
+        expression = self._parse_expression()
+        end_of_file_token = self._match_token(SyntaxKind.EndOfFileToken)
         return SyntaxTree(expression, self.diagnostics, end_of_file_token, self.logger)
 
 

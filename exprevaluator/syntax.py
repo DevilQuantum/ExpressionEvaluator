@@ -3,20 +3,20 @@ from enum import Enum
 
 
 class SyntaxKind(Enum):
+    BadToken = 1,
+    EndOfFileToken = 2,
+    WhiteSpaceToken = 3,
+    NumberToken = 4,
+    PlusToken = 5,
+    MinusToken = 6,
+    StarToken = 7,
+    SlashToken = 8,
+    OpenParenthesisToken = 9,
+    CloseParenthesisToken = 10,
 
-    NumberToken = 0,
-    SpaceToken = 1,
-    PlusToken = 2,
-    MinusToken = 3,
-    StarToken = 4,
-    SlashToken = 5,
-    OpenParenthesisToken = 6,
-    CloseParenthesisToken = 7,
-    BadToken = 8,
-    EndOfFileToken = 9,
-    NumberExpression = 10,
-    BinaryExpression = 11,
-    ParenthesizedExpression = 12
+    NumberExpression = 11,
+    BinaryExpression = 12,
+    ParenthesizedExpression = 13
 
 
 class SyntaxNode(ABC):
@@ -50,14 +50,14 @@ class ExpressionSyntax(SyntaxNode):
         raise StopIteration
 
 
-class NumberExpressionSyntax(ExpressionSyntax):
+class LiteralExpressionSyntax(ExpressionSyntax):
 
-    def __init__(self, numbertoken):
+    def __init__(self, literaltoken):
         super().__init__(SyntaxKind.NumberExpression)
-        self.numbertoken = numbertoken
+        self.literaltoken = literaltoken
 
     def get_children(self):
-        yield self.numbertoken
+        yield self.literaltoken
 
 
 class BinaryExpressionSyntax(ExpressionSyntax):
