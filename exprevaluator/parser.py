@@ -6,7 +6,7 @@ from .syntax import (
     SyntaxToken,
     LiteralExpressionSyntax,
     BinaryExpressionSyntax,
-    ParenthesizedExpressionSyntax
+    ParenthesizedExpressionSyntax, UnaryExpressionSyntax
 )
 
 
@@ -29,7 +29,7 @@ class Parser:
             if (token.syntaxkind != SyntaxKind.WhiteSpaceToken and
                     token.syntaxkind != token.syntaxkind.BadToken):
                 self._tokens.append(token)
-            if token.syntaxkind == SyntaxKind.EndOfFileToken:
+            if token.syntaxkind is SyntaxKind.EndOfFileToken:
                 break
 
         self.diagnostics.extend(lexer.diagnostics)
@@ -61,30 +61,27 @@ class Parser:
                 (f"""Unexpected token '{self._current().syntaxkind}', expected '{syntaxkind}'""", logging.ERROR))
             return SyntaxToken(syntaxkind, self._current().position, None, None)
 
-    def _get_binary_operator_precedence(self, syntaxkind):
-        if (syntaxkind == SyntaxKind.StarToken or
-                syntaxkind == SyntaxKind.SlashToken):
-            return 2
-        elif (syntaxkind == SyntaxKind.PlusToken or
-                syntaxkind == SyntaxKind.MinusToken):
-            return 1
-        else:
-            return 0
-
     def _parse_expression(self, parent_precedence=0):
-        left = self._parse_primary_expression()
+        unary_operator_precedence = self._current().syntaxkind.get_unary_operator_precedence()
+        if unary_operator_precedence != 0 and unary_operator_precedence >= parent_precedence:
+            operatortoken = self._next_token()
+            operand = self._parse_expression(unary_operator_precedence)
+            left = UnaryExpressionSyntax(operatortoken, operand)
+        else:
+            left = self._parse_primary_expression()
+
         while True:
-            precedence = self._get_binary_operator_precedence(self._current().syntaxkind)
-            if precedence == 0 or precedence <= parent_precedence:
+            binary_operator_precedence = self._current().syntaxkind.get_binary_operator_precedence()
+            if binary_operator_precedence == 0 or binary_operator_precedence <= parent_precedence:
                 break
             else:
                 operatortoken = self._next_token()
-                right = self._parse_expression(precedence)
+                right = self._parse_expression(binary_operator_precedence)
                 left = BinaryExpressionSyntax(left, operatortoken, right)
         return left
 
     def _parse_primary_expression(self):
-        if self._current().syntaxkind == SyntaxKind.OpenParenthesisToken:
+        if self._current().syntaxkind is SyntaxKind.OpenParenthesisToken:
             left = self._next_token()
             expression = self._parse_expression()
             right = self._match_token(SyntaxKind.CloseParenthesisToken)

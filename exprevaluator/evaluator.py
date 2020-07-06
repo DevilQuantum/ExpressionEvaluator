@@ -1,5 +1,5 @@
 from .syntax import SyntaxKind, LiteralExpressionSyntax, BinaryExpressionSyntax, \
-    ParenthesizedExpressionSyntax
+    ParenthesizedExpressionSyntax, UnaryExpressionSyntax
 
 
 class Evaluator:
@@ -18,16 +18,25 @@ class Evaluator:
             left = self.evaluate_expression(node.left)
             right = self.evaluate_expression(node.right)
 
-            if node.operatortoken.syntaxkind == SyntaxKind.PlusToken:
+            if node.operatortoken.syntaxkind is SyntaxKind.PlusToken:
                 return left + right
-            elif node.operatortoken.syntaxkind == SyntaxKind.MinusToken:
+            elif node.operatortoken.syntaxkind is SyntaxKind.MinusToken:
                 return left - right
-            elif node.operatortoken.syntaxkind == SyntaxKind.StarToken:
+            elif node.operatortoken.syntaxkind is SyntaxKind.StarToken:
                 return left * right
-            elif node.operatortoken.syntaxkind == SyntaxKind.SlashToken:
+            elif node.operatortoken.syntaxkind is SyntaxKind.SlashToken:
                 return left // right
             else:
-                raise Exception(f"""Unexpected operator '{node.operatortoken.syntaxkind}'""")
+                raise Exception(f"""Unexpected binary operator '{node.operatortoken.syntaxkind}'""")
+
+        elif isinstance(node, UnaryExpressionSyntax):
+            operand = self.evaluate_expression(node.operand)
+            if node.operatortoken.syntaxkind is SyntaxKind.PlusToken:
+                return operand
+            if node.operatortoken.syntaxkind is SyntaxKind.MinusToken:
+                return -operand
+            else:
+                raise Exception(f"""Unexpected unary operator '{node.operatortoken.syntaxkind}'""")
 
         elif isinstance(node, ParenthesizedExpressionSyntax):
             return self.evaluate_expression(node.expression)

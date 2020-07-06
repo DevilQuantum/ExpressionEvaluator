@@ -16,7 +16,25 @@ class SyntaxKind(Enum):
 
     LiteralExpression = 11,
     BinaryExpression = 12,
-    ParenthesizedExpression = 13
+    UnaryExpression = 13,
+    ParenthesizedExpression = 14
+
+    def get_unary_operator_precedence(self):
+        if (self is SyntaxKind.PlusToken or
+                self is SyntaxKind.MinusToken):
+            return 3
+        else:
+            return 0
+
+    def get_binary_operator_precedence(self):
+        if (self is SyntaxKind.StarToken or
+                self is SyntaxKind.SlashToken):
+            return 2
+        elif (self is SyntaxKind.PlusToken or
+                self is SyntaxKind.MinusToken):
+            return 1
+        else:
+            return 0
 
 
 class SyntaxNode(ABC):
@@ -72,6 +90,18 @@ class BinaryExpressionSyntax(ExpressionSyntax):
         yield self.left
         yield self.operatortoken
         yield self.right
+
+
+class UnaryExpressionSyntax(ExpressionSyntax):
+
+    def __init__(self, operatortoken, operand):
+        super().__init__(SyntaxKind.UnaryExpression)
+        self.operatortoken = operatortoken
+        self.operand = operand
+
+    def get_children(self):
+        yield self.operatortoken
+        yield self.operand
 
 
 class ParenthesizedExpressionSyntax(ExpressionSyntax):
