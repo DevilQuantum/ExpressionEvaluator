@@ -13,7 +13,7 @@ def main():
         marker = '└──' if is_last else '├──'
         print(indent, end='')
         print(marker, end='')
-        print(node.syntaxkind, end='')
+        print(node.syntaxkind.name, end='')
 
         if isinstance(node, SyntaxToken) and node.value is not None:
             print(':   ' + str(node.value), end='')
