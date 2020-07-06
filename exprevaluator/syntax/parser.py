@@ -1,13 +1,12 @@
 import logging
 
+from .binaryexpressionsyntax import BinaryExpressionSyntax
 from .lexer import Lexer
-from .syntax import (
-    SyntaxKind,
-    SyntaxToken,
-    LiteralExpressionSyntax,
-    BinaryExpressionSyntax,
-    ParenthesizedExpressionSyntax, UnaryExpressionSyntax
-)
+from .syntaxkind import SyntaxKind
+from .literalexpressionsyntax import LiteralExpressionSyntax
+from .parenthesizedexpressionsyntax import ParenthesizedExpressionSyntax
+from .syntaxtoken import SyntaxToken
+from .unaryexpressionsyntax import UnaryExpressionSyntax
 
 
 class Parser:

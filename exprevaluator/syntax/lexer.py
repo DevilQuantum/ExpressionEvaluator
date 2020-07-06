@@ -1,6 +1,7 @@
 import logging
 
-from .syntax import SyntaxKind, SyntaxToken
+from .syntaxtoken import SyntaxToken
+from .syntaxkind import SyntaxKind
 
 
 class Lexer:
