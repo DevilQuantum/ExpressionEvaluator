@@ -1,5 +1,8 @@
-from .syntax import SyntaxKind, LiteralExpressionSyntax, BinaryExpressionSyntax, \
-    ParenthesizedExpressionSyntax, UnaryExpressionSyntax
+from .syntax.binaryexpressionsyntax import BinaryExpressionSyntax
+from .syntax.literalexpressionsyntax import LiteralExpressionSyntax
+from .syntax.parenthesizedexpressionsyntax import ParenthesizedExpressionSyntax
+from .syntax.syntaxkind import SyntaxKind
+from .syntax.unaryexpressionsyntax import UnaryExpressionSyntax
 
 
 class Evaluator:

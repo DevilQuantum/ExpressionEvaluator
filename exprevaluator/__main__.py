@@ -3,8 +3,8 @@ import os
 import subprocess
 
 from .evaluator import Evaluator
-from .parser import SyntaxTree
-from .syntax import SyntaxToken
+from .syntax.parser import SyntaxTree
+from .syntax.syntaxtoken import SyntaxToken
 
 
 def main():
