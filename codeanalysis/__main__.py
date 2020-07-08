@@ -1,10 +1,12 @@
 import logging
 import os
 import subprocess
+import itertools
 
+from codeanalysis.binder.binder import Binder
 from .evaluator import Evaluator
 from .syntax.parser import SyntaxTree
-from .syntax.syntaxtoken import SyntaxToken
+from .syntax.syntax_token import SyntaxToken
 
 
 def main():
@@ -13,7 +15,7 @@ def main():
         marker = '└──' if is_last else '├──'
         print(indent, end='')
         print(marker, end='')
-        print(node.syntaxkind.name, end='')
+        print(node.kind.name, end='')
 
         if isinstance(node, SyntaxToken) and node.value is not None:
             print(':   ' + str(node.value), end='')
@@ -51,13 +53,14 @@ def main():
             return
 
         syntaxtree = SyntaxTree.parse(term, logger)
-        if show_tree:
-            pretty_print(syntaxtree.root)
+        binder = Binder()
+        bound_expression = binder.bind_expression(syntaxtree.root)
 
-        if syntaxtree.has_diagnostics():
-            syntaxtree.report_diagnostics()
+        if syntaxtree.diagnostics or binder.diagnostics:
+            for diagnostic, level in itertools.chain(syntaxtree.diagnostics, binder.diagnostics):
+                logger.log(level, diagnostic)
         else:
-            evaluator = Evaluator(syntaxtree.root)
+            evaluator = Evaluator(bound_expression)
             result = evaluator.evaluate()
             print(result)
 

@@ -1,7 +1,7 @@
 import logging
 
-from .syntaxtoken import SyntaxToken
-from .syntaxkind import SyntaxKind
+from .syntax_token import SyntaxToken
+from .syntax_kind import SyntaxKind
 
 
 class Lexer:
@@ -24,7 +24,7 @@ class Lexer:
         start_position = self._position
 
         if self._current_char() == '\0':
-            return SyntaxToken(SyntaxKind.EndOfFileToken, start_position, '\0', None)
+            return SyntaxToken(SyntaxKind.END_OF_FILE_TOKEN, start_position, '\0', None)
 
         elif self._current_char().isdigit():
 
@@ -39,7 +39,7 @@ class Lexer:
                 self.diagnostics.append((f'''The character/s '{string}' cannot be converted to integer''',
                                          logging.ERROR))
 
-            return SyntaxToken(SyntaxKind.NumberToken, start_position, string, value)
+            return SyntaxToken(SyntaxKind.NUMBER_TOKEN, start_position, string, value)
 
         elif self._current_char().isspace():
 
@@ -47,35 +47,35 @@ class Lexer:
                 self._next()
 
             string = self.text[start_position:self._position]
-            return SyntaxToken(SyntaxKind.WhiteSpaceToken, start_position, string, None)
+            return SyntaxToken(SyntaxKind.WHITE_SPACE_TOKEN, start_position, string, None)
 
         elif self._current_char() == '+':
             self._next()
-            return SyntaxToken(SyntaxKind.PlusToken, start_position, '+', None)
+            return SyntaxToken(SyntaxKind.PLUS_TOKEN, start_position, '+', None)
 
         elif self._current_char() == '-':
             self._next()
-            return SyntaxToken(SyntaxKind.MinusToken, start_position, '-', None)
+            return SyntaxToken(SyntaxKind.MINUS_TOKEN, start_position, '-', None)
 
         elif self._current_char() == '*':
             self._next()
-            return SyntaxToken(SyntaxKind.StarToken, start_position, '*', None)
+            return SyntaxToken(SyntaxKind.STAR_TOKEN, start_position, '*', None)
 
         elif self._current_char() == '/':
             self._next()
-            return SyntaxToken(SyntaxKind.SlashToken, start_position, '/', None)
+            return SyntaxToken(SyntaxKind.SLASH_TOKEN, start_position, '/', None)
 
         elif self._current_char() == '(':
             self._next()
-            return SyntaxToken(SyntaxKind.OpenParenthesisToken, start_position, '(', None)
+            return SyntaxToken(SyntaxKind.OPEN_PARENTHESIS_TOKEN, start_position, '(', None)
 
         elif self._current_char() == ')':
             self._next()
-            return SyntaxToken(SyntaxKind.CloseParenthesisToken, start_position, ')', None)
+            return SyntaxToken(SyntaxKind.CLOSE_PARENTHESIS_TOKEN, start_position, ')', None)
 
         else:
             string = self.text[start_position]
             self.diagnostics.append((f'''Bad character "{self._current_char()}" at position {start_position + 1}''',
                                      logging.ERROR))
             self._next()
-            return SyntaxToken(SyntaxKind.BadToken, start_position, string, None)
+            return SyntaxToken(SyntaxKind.BAD_TOKEN, start_position, string, None)
