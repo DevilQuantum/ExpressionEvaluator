@@ -1,5 +1,5 @@
-from codeanalysis.binder.bound_expression import BoundExpression
-from codeanalysis.binder.bound_node_kind import BoundNodeKind
+from .bound_expression import BoundExpression
+from .bound_node_kind import BoundNodeKind
 
 
 class BoundLiteralExpression(BoundExpression):

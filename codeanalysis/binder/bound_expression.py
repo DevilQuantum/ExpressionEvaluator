@@ -1,4 +1,4 @@
-from codeanalysis.binder.bound_node import BoundNode
+from .bound_node import BoundNode
 
 
 class BoundExpression(BoundNode):
