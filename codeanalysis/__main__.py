@@ -56,6 +56,9 @@ def main():
         binder = Binder()
         bound_expression = binder.bind_expression(syntaxtree.root)
 
+        if show_tree:
+            pretty_print(syntaxtree.root)
+
         if syntaxtree.diagnostics or binder.diagnostics:
             for diagnostic, level in itertools.chain(syntaxtree.diagnostics, binder.diagnostics):
                 logger.log(level, diagnostic)
