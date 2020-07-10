@@ -8,6 +8,3 @@ class SyntaxToken(SyntaxNode):
         self.position = position
         self.text = text
         self.value = value
-
-    def get_children(self):
-        raise StopIteration
