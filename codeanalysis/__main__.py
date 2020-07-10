@@ -49,15 +49,15 @@ def main():
             clear()
             return
 
-        syntaxtree = SyntaxTree.parse(term, logger)
+        syntax_tree = SyntaxTree.parse(term, logger)
         binder = Binder()
-        bound_expression = binder.bind_expression(syntaxtree.root)
+        bound_expression = binder.bind_expression(syntax_tree.root)
 
         if show_tree:
-            pretty_print(syntaxtree.root)
+            pretty_print(syntax_tree.root)
 
-        if syntaxtree.diagnostics or binder.diagnostics:
-            for diagnostic, level in itertools.chain(syntaxtree.diagnostics, binder.diagnostics):
+        if syntax_tree.diagnostics or binder.diagnostics:
+            for diagnostic, level in itertools.chain(syntax_tree.diagnostics, binder.diagnostics):
                 logger.log(level, diagnostic)
         else:
             evaluator = Evaluator(bound_expression)
