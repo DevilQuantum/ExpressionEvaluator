@@ -16,19 +16,16 @@ def main():
         print(indent, end='')
         print(marker, end='')
         print(node.kind.name, end='')
-
-        if isinstance(node, SyntaxToken) and node.value is not None:
-            print(':   ' + str(node.value), end='')
-
-        print()
-        *_, last_child = node.get_children()
-
-        indent += '    ' if is_last else '│   '
-        for child in node.get_children():
-            try:
+        if type(node) is SyntaxToken:
+            if node.value is not None:
+                print(':   ' + str(node.value), end='')
+            print()
+        else:
+            print()
+            indent += '    ' if is_last else '│   '
+            *_, last_child = node.get_children()
+            for child in node.get_children():
                 pretty_print(child, indent, child == last_child)
-            except StopIteration:
-                continue
 
     def clear():
         if os.name in ('nt', 'dos'):
