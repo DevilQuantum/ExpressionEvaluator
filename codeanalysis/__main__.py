@@ -3,7 +3,7 @@ import os
 import subprocess
 import itertools
 
-from codeanalysis.binder.binder import Binder
+from .binder.binder import Binder
 from .evaluator import Evaluator
 from .syntax.parser import SyntaxTree
 from .syntax.syntax_token import SyntaxToken

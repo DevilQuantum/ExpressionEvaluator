@@ -26,7 +26,7 @@ class Binder:
             raise Exception(f'Unexpected syntax {syntax.kind}')
 
     def _bind_literal_expression(self, syntax):
-        value = int(syntax.literaltoken.value or 0)
+        value = 0 if syntax.value is None else syntax.value
         return BoundLiteralExpression(value)
 
     def _bind_unary_expression(self, syntax):
@@ -50,35 +50,39 @@ class Binder:
         )
 
         if bound_operator_kind is None:
-            self.diagnostics.append((
-                f"""Binary operator '{syntax.operator_token.text}' is not defined for types 
-                '{type(bound_left.value)}' and '{type(bound_right.value)}'""",
-                logging.ERROR)
+            self.diagnostics.append(
+                (
+                    f"""Binary operator '{syntax.operator_token.text}' is not defined for types """
+                    f"""'{type(bound_left.value)}' and '{type(bound_right.value)}'""",
+                    logging.ERROR
+                )
             )
         return BoundBinaryExpression(bound_left, bound_operator_kind, bound_right)
 
     def _bind_unary_operator_kind(self, kind, operand_type):
-        if operand_type is not int:
-            return None
-
-        if kind is SyntaxKind.PLUS_TOKEN:
-            return BoundUnaryOperatorKind.Identity
-        elif kind is SyntaxKind.MINUS_TOKEN:
-            return BoundUnaryOperatorKind.Negation
-        else:
-            raise Exception(f'Unexpected unary operator {kind}')
+        if operand_type is int:
+            if kind is SyntaxKind.PLUS_TOKEN:
+                return BoundUnaryOperatorKind.Identity
+            elif kind is SyntaxKind.MINUS_TOKEN:
+                return BoundUnaryOperatorKind.Negation
+        elif operand_type is bool:
+            if kind is SyntaxKind.BANG_TOKEN:
+                return BoundUnaryOperatorKind.LOGICAL_NEGATION
+        return None
 
     def _bind_binary_operator_kind(self, kind, left_type, right_type):
-        if left_type is not int or right_type is not int:
-            return None
-
-        if kind is SyntaxKind.PLUS_TOKEN:
-            return BoundBinaryOperatorKind.ADDITION
-        elif kind is SyntaxKind.MINUS_TOKEN:
-            return BoundBinaryOperatorKind.SUBTRACTION
-        elif kind is SyntaxKind.STAR_TOKEN:
-            return BoundBinaryOperatorKind.MULTIPLICATION
-        elif kind is SyntaxKind.SLASH_TOKEN:
-            return BoundBinaryOperatorKind.DIVISION
-        else:
-            raise Exception(f'Unexpected binary operator {kind}')
+        if left_type is int and right_type is int:
+            if kind is SyntaxKind.PLUS_TOKEN:
+                return BoundBinaryOperatorKind.ADDITION
+            elif kind is SyntaxKind.MINUS_TOKEN:
+                return BoundBinaryOperatorKind.SUBTRACTION
+            elif kind is SyntaxKind.STAR_TOKEN:
+                return BoundBinaryOperatorKind.MULTIPLICATION
+            elif kind is SyntaxKind.SLASH_TOKEN:
+                return BoundBinaryOperatorKind.DIVISION
+        elif left_type is bool and right_type is bool:
+            if kind is SyntaxKind.DOUBLE_AMPERSAND_TOKEN:
+                return BoundBinaryOperatorKind.LOGICAL_AND
+            elif kind is SyntaxKind.DOUBLE_PIPE_TOKEN:
+                return BoundBinaryOperatorKind.LOGICAL_OR
+        return None

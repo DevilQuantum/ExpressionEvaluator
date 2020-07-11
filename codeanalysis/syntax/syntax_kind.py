@@ -1,37 +1,60 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class SyntaxKind(Enum):
+    # SyntaxToken:
+    BAD_TOKEN = auto()
+    END_OF_FILE_TOKEN = auto()
+    WHITE_SPACE_TOKEN = auto()
+    NUMBER_TOKEN = auto()
+    PLUS_TOKEN = auto()
+    MINUS_TOKEN = auto()
+    STAR_TOKEN = auto()
+    SLASH_TOKEN = auto()
+    OPEN_PARENTHESIS_TOKEN = auto()
+    CLOSE_PARENTHESIS_TOKEN = auto()
+    IDENTIFIER_TOKEN = auto()
+    BANG_TOKEN = auto()
+    DOUBLE_AMPERSAND_TOKEN = auto()
+    DOUBLE_PIPE_TOKEN = auto()
 
-    BAD_TOKEN = 1,
-    END_OF_FILE_TOKEN = 2,
-    WHITE_SPACE_TOKEN = 3,
-    NUMBER_TOKEN = 4,
-    PLUS_TOKEN = 5,
-    MINUS_TOKEN = 6,
-    STAR_TOKEN = 7,
-    SLASH_TOKEN = 8,
-    OPEN_PARENTHESIS_TOKEN = 9,
-    CLOSE_PARENTHESIS_TOKEN = 10,
+    # ExpressionSyntax:
+    LITERAL_EXPRESSION = auto()
+    BINARY_EXPRESSION = auto()
+    UNARY_EXPRESSION = auto()
+    PARENTHESIZED_EXPRESSION = auto()
 
-    LITERAL_EXPRESSION = 11,
-    BINARY_EXPRESSION = 12,
-    UNARY_EXPRESSION = 13,
-    PARENTHESIZED_EXPRESSION = 14
+    # Keyword:
+    FALSE_KEYWORD = auto()
+    TRUE_KEYWORD = auto()
 
     def get_unary_operator_precedence(self):
         if (self is SyntaxKind.PLUS_TOKEN or
-                self is SyntaxKind.MINUS_TOKEN):
-            return 3
+                self is SyntaxKind.MINUS_TOKEN or
+                self is SyntaxKind.BANG_TOKEN):
+            return 5
         else:
             return 0
 
     def get_binary_operator_precedence(self):
-        if (self is SyntaxKind.STAR_TOKEN or
-                self is SyntaxKind.SLASH_TOKEN):
+        if (self is self.STAR_TOKEN or
+                self is self.SLASH_TOKEN):
+            return 4
+        elif (self is self.PLUS_TOKEN or
+              self is self.MINUS_TOKEN):
+            return 3
+        elif self is self.DOUBLE_AMPERSAND_TOKEN:
             return 2
-        elif (self is SyntaxKind.PLUS_TOKEN or
-              self is SyntaxKind.MINUS_TOKEN):
+        elif self is self.DOUBLE_PIPE_TOKEN:
             return 1
         else:
             return 0
+
+    @classmethod
+    def get_keyword_kind(cls, string):
+        if string == "true":
+            return cls.TRUE_KEYWORD
+        elif string == "false":
+            return cls.FALSE_KEYWORD
+        else:
+            return cls.IDENTIFIER_TOKEN

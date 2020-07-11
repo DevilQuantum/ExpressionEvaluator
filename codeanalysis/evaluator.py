@@ -14,34 +14,34 @@ class Evaluator:
         return self.evaluate_expression(self._root)
 
     def evaluate_expression(self, node):
-        if isinstance(node, BoundLiteralExpression):
-            return int(node.value)
-
-        elif isinstance(node, BoundBinaryExpression):
+        if type(node) is BoundLiteralExpression:
+            return node.value
+        elif type(node) is BoundBinaryExpression:
             left = self.evaluate_expression(node.left)
             right = self.evaluate_expression(node.right)
-
             if node.operator_kind is BoundBinaryOperatorKind.ADDITION:
-                return left + right
+                return int(left) + int(right)
             elif node.operator_kind is BoundBinaryOperatorKind.SUBTRACTION:
-                return left - right
+                return int(left) - int(right)
             elif node.operator_kind is BoundBinaryOperatorKind.MULTIPLICATION:
-                return left * right
+                return int(left) * int(right)
             elif node.operator_kind is BoundBinaryOperatorKind.DIVISION:
-                return left // right
+                return int(left) // int(right)
+            elif node.operator_kind is BoundBinaryOperatorKind.LOGICAL_AND:
+                return bool(left) and bool(right)
+            elif node.operator_kind is BoundBinaryOperatorKind.LOGICAL_OR:
+                return bool(left) or bool(right)
             else:
-                print(node.operator_kind)
-                print(type(node))
                 raise Exception(f"""Unexpected binary operator '{node.operator_kind}'""")
-
-        elif isinstance(node, BoundUnaryExpression):
-            operand = int(self.evaluate_expression(node.operand))
+        elif type(node) is BoundUnaryExpression:
+            operand = self.evaluate_expression(node.operand)
             if node.operator_kind is BoundUnaryOperatorKind.Identity:
-                return operand
-            if node.operator_kind is BoundUnaryOperatorKind.Negation:
-                return -operand
+                return int(operand)
+            elif node.operator_kind is BoundUnaryOperatorKind.Negation:
+                return int(-operand)
+            elif node.operator_kind is BoundUnaryOperatorKind.LOGICAL_NEGATION:
+                return not bool(operand)
             else:
                 raise Exception(f"""Unexpected unary operator '{node.operator_kind}'""")
-
         else:
             raise Exception(f"""Unexpected node '{node.operator_kind}'""")
