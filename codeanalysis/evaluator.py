@@ -31,6 +31,10 @@ class Evaluator:
                 return bool(left) and bool(right)
             elif node.operator.kind is BoundBinaryOperatorKind.LOGICAL_OR:
                 return bool(left) or bool(right)
+            elif node.operator.kind is BoundBinaryOperatorKind.EQUALS:
+                return left == right
+            elif node.operator.kind is BoundBinaryOperatorKind.NOT_EQUALS:
+                return not left == right
             else:
                 raise Exception(f"""Unexpected binary operator '{node.operator}'""")
         elif type(node) is BoundUnaryExpression:

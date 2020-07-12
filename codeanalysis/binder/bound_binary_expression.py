@@ -9,4 +9,4 @@ class BoundBinaryExpression(BoundExpression):
         self.left = left
         self.operator = operator
         self.right = right
-        self.type = left.type
+        self.type = operator.result_type

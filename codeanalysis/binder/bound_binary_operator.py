@@ -23,9 +23,16 @@ class BoundBinaryOperator:
 operators = [
     BoundBinaryOperator(SyntaxKind.PLUS_TOKEN, BoundBinaryOperatorKind.ADDITION, int),
     BoundBinaryOperator(SyntaxKind.MINUS_TOKEN, BoundBinaryOperatorKind.SUBTRACTION, int),
+
     BoundBinaryOperator(SyntaxKind.STAR_TOKEN, BoundBinaryOperatorKind.MULTIPLICATION, int),
     BoundBinaryOperator(SyntaxKind.SLASH_TOKEN, BoundBinaryOperatorKind.DIVISION, int),
 
+    BoundBinaryOperator(SyntaxKind.DOUBLE_EQUALS_TOKEN, BoundBinaryOperatorKind.EQUALS, int, None, bool),
+    BoundBinaryOperator(SyntaxKind.BANG_EQUALS_TOKEN, BoundBinaryOperatorKind.NOT_EQUALS, int, None, bool),
+
     BoundBinaryOperator(SyntaxKind.DOUBLE_AMPERSAND_TOKEN, BoundBinaryOperatorKind.LOGICAL_AND, bool),
     BoundBinaryOperator(SyntaxKind.DOUBLE_PIPE_TOKEN, BoundBinaryOperatorKind.LOGICAL_OR, bool),
+
+    BoundBinaryOperator(SyntaxKind.DOUBLE_EQUALS_TOKEN, BoundBinaryOperatorKind.EQUALS, bool),
+    BoundBinaryOperator(SyntaxKind.BANG_EQUALS_TOKEN, BoundBinaryOperatorKind.NOT_EQUALS, bool)
 ]

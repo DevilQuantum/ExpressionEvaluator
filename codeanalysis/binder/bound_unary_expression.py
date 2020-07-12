@@ -8,4 +8,4 @@ class BoundUnaryExpression(BoundExpression):
         super().__init__(BoundNodeKind.UNARY_EXPRESSION)
         self.operator = operator
         self.operand = operand
-        self.type = operand.type
+        self.type = operator.result_type

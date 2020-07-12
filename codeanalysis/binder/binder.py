@@ -51,7 +51,7 @@ class Binder:
             self.diagnostics.append(
                 (
                     f"""Binary operator '{syntax.operator_token.text}' is not defined for types """
-                    f"""'{type(bound_left.value)}' and '{type(bound_right.value)}'""",
+                    f"""'{bound_left.type}' and '{bound_right.type}'""",
                     logging.ERROR
                 )
             )

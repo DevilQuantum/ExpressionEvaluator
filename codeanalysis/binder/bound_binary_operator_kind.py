@@ -9,3 +9,5 @@ class BoundBinaryOperatorKind(Enum):
     DIVISION = 4
     LOGICAL_AND = 5
     LOGICAL_OR = 6
+    EQUALS = 7
+    NOT_EQUALS = 8

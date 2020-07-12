@@ -24,8 +24,8 @@ class Lexer:
     def _lookahead(self):
         return self._peek(1)
 
-    def _next(self):
-        self._position += 1
+    def _next(self, consume=1):
+        self._position += consume
 
     def lex_token(self):
         start_position = self._position
@@ -101,13 +101,17 @@ class Lexer:
         elif self._current_char() == '!':
             self._next()
             return SyntaxToken(SyntaxKind.BANG_TOKEN, start_position, '!', None)
+        elif self._current_char() == '=' and self._lookahead() == '=':
+            self._next(2)
+            return SyntaxToken(SyntaxKind.DOUBLE_EQUALS_TOKEN, start_position, '==', None)
+        elif self._current_char() == '!' and self._lookahead() == '=':
+            self._next(2)
+            return SyntaxToken(SyntaxKind.BANG_EQUALS_TOKEN, start_position, '!=', None)
         elif self._current_char() == '&' and self._lookahead() == '&':
-            self._next()
-            self._next()
+            self._next(2)
             return SyntaxToken(SyntaxKind.DOUBLE_AMPERSAND_TOKEN, start_position, '&&', None)
         elif self._current_char() == '|' and self._lookahead() == '|':
-            self._next()
-            self._next()
+            self._next(2)
             return SyntaxToken(SyntaxKind.DOUBLE_PIPE_TOKEN, start_position, '||', None)
         else:
             string = self.text[start_position]

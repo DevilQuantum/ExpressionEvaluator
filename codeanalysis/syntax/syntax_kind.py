@@ -15,6 +15,8 @@ class SyntaxKind(Enum):
     CLOSE_PARENTHESIS_TOKEN = auto()
     IDENTIFIER_TOKEN = auto()
     BANG_TOKEN = auto()
+    DOUBLE_EQUALS_TOKEN = auto()
+    BANG_EQUALS_TOKEN = auto()
     DOUBLE_AMPERSAND_TOKEN = auto()
     DOUBLE_PIPE_TOKEN = auto()
 
@@ -29,19 +31,21 @@ class SyntaxKind(Enum):
     TRUE_KEYWORD = auto()
 
     def get_unary_operator_precedence(self):
-        if (self is SyntaxKind.PLUS_TOKEN or
-                self is SyntaxKind.MINUS_TOKEN or
-                self is SyntaxKind.BANG_TOKEN):
-            return 5
+        if (
+            self is SyntaxKind.PLUS_TOKEN or
+            self is SyntaxKind.MINUS_TOKEN or
+            self is SyntaxKind.BANG_TOKEN
+        ):
+            return 6
         else:
             return 0
 
     def get_binary_operator_precedence(self):
-        if (self is self.STAR_TOKEN or
-                self is self.SLASH_TOKEN):
+        if self is self.STAR_TOKEN or self is self.SLASH_TOKEN:
+            return 5
+        elif self is self.PLUS_TOKEN or self is self.MINUS_TOKEN:
             return 4
-        elif (self is self.PLUS_TOKEN or
-              self is self.MINUS_TOKEN):
+        elif self is self.DOUBLE_EQUALS_TOKEN or self is self.BANG_EQUALS_TOKEN:
             return 3
         elif self is self.DOUBLE_AMPERSAND_TOKEN:
             return 2
