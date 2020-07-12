@@ -4,11 +4,8 @@ from .bound_node_kind import BoundNodeKind
 
 class BoundUnaryExpression(BoundExpression):
 
-    def __init__(self, operator_kind, operand):
+    def __init__(self, operator, operand):
         super().__init__(BoundNodeKind.UNARY_EXPRESSION)
-        self.operator_kind = operator_kind
+        self.operator = operator
         self.operand = operand
-
-    @property
-    def type(self):
-        return self.operand.type
+        self.type = operand.type

@@ -4,12 +4,9 @@ from .bound_node_kind import BoundNodeKind
 
 class BoundBinaryExpression(BoundExpression):
 
-    def __init__(self, left, operator_kind, right):
+    def __init__(self, left, operator, right):
         super().__init__(BoundNodeKind.UNARY_EXPRESSION)
         self.left = left
-        self.operator_kind = operator_kind
+        self.operator = operator
         self.right = right
-
-    @property
-    def type(self):
-        return self.left.type
+        self.type = left.type
