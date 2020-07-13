@@ -51,23 +51,22 @@ class Lexer:
                         logging.ERROR
                     )
                 )
-            syntax_token = SyntaxToken(
+            return SyntaxToken(
                 SyntaxKind.NUMBER_TOKEN,
                 start_position,
                 string,
                 value
             )
-            return syntax_token
         elif self._current_char().isspace():
             while self._current_char().isspace():
                 self._next()
             string = self.text[start_position:self._position]
-            syntax_token = SyntaxToken(
+            return SyntaxToken(
                 SyntaxKind.WHITE_SPACE_TOKEN,
                 start_position,
-                string, None
+                string,
+                None
             )
-            return syntax_token
         elif self._current_char().isalpha():
             while self._current_char().isalpha():
                 self._next()
@@ -82,37 +81,92 @@ class Lexer:
             return syntax_token
         elif self._current_char() == '+':
             self._next()
-            return SyntaxToken(SyntaxKind.PLUS_TOKEN, start_position, '+', None)
+            return SyntaxToken(
+                SyntaxKind.PLUS_TOKEN,
+                start_position,
+                '+',
+                None
+            )
         elif self._current_char() == '-':
             self._next()
-            return SyntaxToken(SyntaxKind.MINUS_TOKEN, start_position, '-', None)
+            return SyntaxToken(
+                SyntaxKind.MINUS_TOKEN,
+                start_position,
+                '-',
+                None
+            )
         elif self._current_char() == '*':
             self._next()
-            return SyntaxToken(SyntaxKind.STAR_TOKEN, start_position, '*', None)
+            return SyntaxToken(
+                SyntaxKind.STAR_TOKEN,
+                start_position,
+                '*',
+                None
+            )
         elif self._current_char() == '/':
             self._next()
-            return SyntaxToken(SyntaxKind.SLASH_TOKEN, start_position, '/', None)
+            return SyntaxToken(
+                SyntaxKind.SLASH_TOKEN,
+                start_position,
+                '/',
+                None
+            )
         elif self._current_char() == '(':
             self._next()
-            return SyntaxToken(SyntaxKind.OPEN_PARENTHESIS_TOKEN, start_position, '(', None)
+            return SyntaxToken(
+                SyntaxKind.OPEN_PARENTHESIS_TOKEN,
+                start_position,
+                '(',
+                None
+            )
         elif self._current_char() == ')':
             self._next()
-            return SyntaxToken(SyntaxKind.CLOSE_PARENTHESIS_TOKEN, start_position, ')', None)
-        elif self._current_char() == '!':
-            self._next()
-            return SyntaxToken(SyntaxKind.BANG_TOKEN, start_position, '!', None)
+            return SyntaxToken(
+                SyntaxKind.CLOSE_PARENTHESIS_TOKEN,
+                start_position,
+                ')',
+                None
+            )
         elif self._current_char() == '=' and self._lookahead() == '=':
             self._next(2)
-            return SyntaxToken(SyntaxKind.DOUBLE_EQUALS_TOKEN, start_position, '==', None)
+            return SyntaxToken(
+                SyntaxKind.DOUBLE_EQUALS_TOKEN,
+                start_position,
+                '==',
+                None
+            )
         elif self._current_char() == '!' and self._lookahead() == '=':
             self._next(2)
-            return SyntaxToken(SyntaxKind.BANG_EQUALS_TOKEN, start_position, '!=', None)
+            return SyntaxToken(
+                SyntaxKind.BANG_EQUALS_TOKEN,
+                start_position,
+                '!=',
+                None
+            )
         elif self._current_char() == '&' and self._lookahead() == '&':
             self._next(2)
-            return SyntaxToken(SyntaxKind.DOUBLE_AMPERSAND_TOKEN, start_position, '&&', None)
+            return SyntaxToken(
+                SyntaxKind.DOUBLE_AMPERSAND_TOKEN,
+                start_position,
+                '&&',
+                None
+            )
         elif self._current_char() == '|' and self._lookahead() == '|':
             self._next(2)
-            return SyntaxToken(SyntaxKind.DOUBLE_PIPE_TOKEN, start_position, '||', None)
+            return SyntaxToken(
+                SyntaxKind.DOUBLE_PIPE_TOKEN,
+                start_position,
+                '||',
+                None
+            )
+        elif self._current_char() == '!':
+            self._next()
+            return SyntaxToken(
+                SyntaxKind.BANG_TOKEN,
+                start_position,
+                '!',
+                None
+            )
         else:
             string = self.text[start_position]
             self.diagnostics.append(
@@ -122,4 +176,9 @@ class Lexer:
                 )
             )
             self._next()
-            return SyntaxToken(SyntaxKind.BAD_TOKEN, start_position, string, None)
+            return SyntaxToken(
+                SyntaxKind.BAD_TOKEN,
+                start_position,
+                string,
+                None
+            )
