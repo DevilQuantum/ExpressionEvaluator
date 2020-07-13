@@ -33,9 +33,12 @@ class Binder:
         bound_operand = self.bind_expression(syntax.operand)
         bound_operator = BoundUnaryOperator.bind(syntax.operator_token.kind, bound_operand.type)
         if bound_operator is None:
-            self.diagnostics.append((
-                f"""Unary operator '{syntax.operator_token.text}' is not defined for type '{type(bound_operand)}'""",
-                logging.ERROR)
+            self.diagnostics.append(
+                (
+                    f"""Unary operator '{syntax.operator_token.text}' is not defined for type """
+                    f"""'{bound_operand.type}'""",
+                    logging.ERROR
+                )
             )
             return bound_operand
         else:
@@ -49,6 +52,7 @@ class Binder:
             bound_left.type,
             bound_right.type
         )
+
         if bound_operator is None:
             self.diagnostics.append(
                 (

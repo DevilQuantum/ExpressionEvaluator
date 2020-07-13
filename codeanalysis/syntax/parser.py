@@ -25,12 +25,13 @@ class Parser:
         lexer = Lexer(text)
         while True:
             token = lexer.lex_token()
-            if (token.kind is not SyntaxKind.WHITE_SPACE_TOKEN and
-                    token.kind is not SyntaxKind.BAD_TOKEN):
+            if token.kind is SyntaxKind.WHITE_SPACE_TOKEN or token.kind is SyntaxKind.BAD_TOKEN:
+                continue
+            else:
                 self._tokens.append(token)
+
             if token.kind is SyntaxKind.END_OF_FILE_TOKEN:
                 break
-
         self.diagnostics.extend(lexer.diagnostics)
 
     def _reset(self):
@@ -57,13 +58,16 @@ class Parser:
             return self._next_token()
         else:
             self.diagnostics.append(
-                (f"""Unexpected token '{self._current().kind}', expected '{kind}'""", logging.ERROR))
+                (
+                    f"""Unexpected token '{self._current().kind}', expected '{kind}'""",
+                    logging.ERROR
+                )
+            )
             return SyntaxToken(kind, self._current().position, None, None)
 
     def _parse_expression(self, parent_precedence=0):
         unary_operator_precedence = self._current().kind.get_unary_operator_precedence()
-        if (unary_operator_precedence != 0 and
-                unary_operator_precedence >= parent_precedence):
+        if unary_operator_precedence != 0 and unary_operator_precedence >= parent_precedence:
             operator_token = self._next_token()
             operand = self._parse_expression(unary_operator_precedence)
             left = UnaryExpressionSyntax(operator_token, operand)
@@ -72,8 +76,7 @@ class Parser:
 
         while True:
             binary_operator_precedence = self._current().kind.get_binary_operator_precedence()
-            if (binary_operator_precedence == 0 or
-                    binary_operator_precedence <= parent_precedence):
+            if binary_operator_precedence == 0 or binary_operator_precedence <= parent_precedence:
                 break
             else:
                 operator_token = self._next_token()
@@ -86,19 +89,15 @@ class Parser:
             left = self._next_token()
             expression = self._parse_expression()
             right = self._match_token(SyntaxKind.CLOSE_PARENTHESIS_TOKEN)
-
-            expression_syntax = ParenthesizedExpressionSyntax(
+            return ParenthesizedExpressionSyntax(
                 left,
                 expression,
                 right
             )
-            return expression_syntax
-        elif (self._current().kind is SyntaxKind.TRUE_KEYWORD or
-                self._current().kind is SyntaxKind.FALSE_KEYWORD):
+        elif self._current().kind is SyntaxKind.TRUE_KEYWORD or self._current().kind is SyntaxKind.FALSE_KEYWORD:
             keyword_token = self._next_token()
             value = keyword_token.kind is SyntaxKind.TRUE_KEYWORD
-            expression_syntax = LiteralExpressionSyntax(keyword_token, value)
-            return expression_syntax
+            return LiteralExpressionSyntax(keyword_token, value)
         else:
             number_token = self._match_token(SyntaxKind.NUMBER_TOKEN)
             return LiteralExpressionSyntax(number_token)
@@ -106,14 +105,12 @@ class Parser:
     def _parse(self):
         expression = self._parse_expression()
         end_of_file_token = self._match_token(SyntaxKind.END_OF_FILE_TOKEN)
-
-        syntax_tree = SyntaxTree(
+        return SyntaxTree(
             expression,
             self.diagnostics,
             end_of_file_token,
             self.logger
         )
-        return syntax_tree
 
 
 class SyntaxTree:
