@@ -37,7 +37,9 @@ class Binder:
                 f"""Unary operator '{syntax.operator_token.text}' is not defined for type '{type(bound_operand)}'""",
                 logging.ERROR)
             )
-        return BoundUnaryExpression(bound_operator, bound_operand)
+            return bound_operand
+        else:
+            return BoundUnaryExpression(bound_operator, bound_operand)
 
     def _bind_binary_expression(self, syntax):
         bound_left = self.bind_expression(syntax.left)
@@ -55,4 +57,6 @@ class Binder:
                     logging.ERROR
                 )
             )
-        return BoundBinaryExpression(bound_left, bound_operator, bound_right)
+            return bound_left
+        else:
+            return BoundBinaryExpression(bound_left, bound_operator, bound_right)
