@@ -5,13 +5,14 @@ from .bound_binary_operator import BoundBinaryOperator
 from .bound_literal_expression import BoundLiteralExpression
 from .bound_unary_expression import BoundUnaryExpression
 from .bound_unary_operator import BoundUnaryOperator
+from ..diagnostic import DiagnosticBag
 from ..syntax.syntax_kind import SyntaxKind
 
 
 class Binder:
 
     def __init__(self):
-        self.diagnostics = []
+        self.diagnostic_bag = DiagnosticBag()
 
     def bind_expression(self, syntax):
         if syntax.kind is SyntaxKind.LITERAL_EXPRESSION:
@@ -33,12 +34,11 @@ class Binder:
         bound_operand = self.bind_expression(syntax.operand)
         bound_operator = BoundUnaryOperator.bind(syntax.operator_token.kind, bound_operand.type)
         if bound_operator is None:
-            self.diagnostics.append(
-                (
-                    f"""Unary operator '{syntax.operator_token.text}' is not defined for type """
-                    f"""'{bound_operand.type}'""",
-                    logging.ERROR
-                )
+            self.diagnostic_bag.report_undefined_unary_operator(
+                syntax.operator_token.text_span,
+                syntax.operator_token.string,
+                syntax.operator_token.type,
+                logging.ERROR
             )
             return bound_operand
         else:
@@ -54,12 +54,12 @@ class Binder:
         )
 
         if bound_operator is None:
-            self.diagnostics.append(
-                (
-                    f"""Binary operator '{syntax.operator_token.text}' is not defined for types """
-                    f"""'{bound_left.type}' and '{bound_right.type}'""",
-                    logging.ERROR
-                )
+            self.diagnostic_bag.report_undefined_binary_operator(
+                syntax.operator_token.text_span,
+                syntax.operator_token.text,
+                bound_left.type,
+                bound_right.type,
+                logging.ERROR
             )
             return bound_left
         else:

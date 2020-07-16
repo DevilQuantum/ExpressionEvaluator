@@ -7,13 +7,13 @@ from .literal_expression_syntax import LiteralExpressionSyntax
 from .parenthesized_expression_syntax import ParenthesizedExpressionSyntax
 from .syntax_token import SyntaxToken
 from .unary_expression_syntax import UnaryExpressionSyntax
+from ..diagnostic import DiagnosticBag
 
 
 class Parser:
 
-    def __init__(self, text, logger=None):
-        self.logger = logger or logging.getLogger(__name__)
-        self.diagnostics = []
+    def __init__(self, text):
+        self.diagnostic_bag = DiagnosticBag()
         self._tokens = []
         self._position = 0
         self._lex(text)
@@ -32,10 +32,12 @@ class Parser:
 
             if token.kind is SyntaxKind.END_OF_FILE_TOKEN:
                 break
-        self.diagnostics.extend(lexer.diagnostics)
+        self.diagnostic_bag.diagnostics.extend(
+            lexer.diagnostic_bag.diagnostics
+        )
 
     def _reset(self):
-        self.diagnostics.clear()
+        self.diagnostic_bag.diagnostics.clear()
         self._tokens.clear()
 
     def _peek(self, offset):
@@ -57,11 +59,11 @@ class Parser:
         if self._current().kind == kind:
             return self._next_token()
         else:
-            self.diagnostics.append(
-                (
-                    f"""Unexpected token '{self._current().kind}', expected '{kind}'""",
-                    logging.ERROR
-                )
+            self.diagnostic_bag.report_unexpected_token(
+                self._current().text_span,
+                self._current().kind,
+                kind,
+                logging.ERROR
             )
             return SyntaxToken(kind, self._current().position, None, None)
 
@@ -107,22 +109,19 @@ class Parser:
         end_of_file_token = self._match_token(SyntaxKind.END_OF_FILE_TOKEN)
         return SyntaxTree(
             expression,
-            self.diagnostics,
-            end_of_file_token,
-            self.logger
+            self.diagnostic_bag,
+            end_of_file_token
         )
 
 
 class SyntaxTree:
 
-    def __init__(self, expression_syntax, diagnostics, end_of_file_token, logger=None):
-        self.logger = logger or logging.getLogger(__name__)
-        self.diagnostics = diagnostics
+    def __init__(self, expression_syntax, diagnostic_bag, end_of_file_token):
+        self.diagnostic_bag = diagnostic_bag
         self.root = expression_syntax
         self.end_of_file_token = end_of_file_token
 
     @staticmethod
-    def parse(text, logger=None):
-        logger = logger or logging.getLogger(__name__)
-        parser = Parser(text, logger)
+    def parse(text):
+        parser = Parser(text)
         return parser.parse()

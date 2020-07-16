@@ -2,21 +2,23 @@ import logging
 
 from .syntax_token import SyntaxToken
 from .syntax_kind import SyntaxKind
+from ..diagnostic import DiagnosticBag
+from ..text_span import TextSpan
 
 
 class Lexer:
 
     def __init__(self, text):
-        self.diagnostics = []
-        self.text = text
+        self.diagnostic_bag = DiagnosticBag()
+        self._text = text
         self._position = 0
 
     def _peek(self, offset):
         index = self._position + offset
-        if index >= len(self.text):
+        if index >= len(self._text):
             return '\0'
         else:
-            return self.text[index]
+            return self._text[index]
 
     def _current_char(self):
         return self._peek(0)
@@ -40,16 +42,19 @@ class Lexer:
         elif self._current_char().isdigit():
             while self._current_char().isdigit():
                 self._next()
-            string = self.text[start_position:self._position]
+            string = self._text[start_position:self._position]
             value = None
             try:
                 value = int(string)
             except ValueError:
-                self.diagnostics.append(
-                    (
-                        f'''The character/s '{string}' cannot be converted to integer''',
-                        logging.ERROR
-                    )
+                self.diagnostic_bag.report_invalid_number(
+                    TextSpan(
+                        start_position,
+                        len(string)
+                    ),
+                    string,
+                    int,
+                    logging.ERROR
                 )
             return SyntaxToken(
                 SyntaxKind.NUMBER_TOKEN,
@@ -60,7 +65,7 @@ class Lexer:
         elif self._current_char().isspace():
             while self._current_char().isspace():
                 self._next()
-            string = self.text[start_position:self._position]
+            string = self._text[start_position:self._position]
             return SyntaxToken(
                 SyntaxKind.WHITE_SPACE_TOKEN,
                 start_position,
@@ -70,7 +75,7 @@ class Lexer:
         elif self._current_char().isalpha():
             while self._current_char().isalpha():
                 self._next()
-            string = self.text[start_position:self._position]
+            string = self._text[start_position:self._position]
             kind = SyntaxKind.get_keyword_kind(string)
             syntax_token = SyntaxToken(
                 kind,
@@ -168,13 +173,8 @@ class Lexer:
                 None
             )
         else:
-            string = self.text[start_position]
-            self.diagnostics.append(
-                (
-                    f'''Bad character "{self._current_char()}" at position {start_position + 1}''',
-                    logging.ERROR
-                )
-            )
+            string = self._text[start_position]
+            self.diagnostic_bag.report_bad_character(start_position, self._current_char(), logging.ERROR)
             self._next()
             return SyntaxToken(
                 SyntaxKind.BAD_TOKEN,

@@ -1,10 +1,9 @@
 import logging
 import os
 import subprocess
-import itertools
+import colorama
 
-from .binder.binder import Binder
-from .evaluator import Evaluator
+from .compilation import Compilation
 from .syntax.parser import SyntaxTree
 from .syntax.syntax_token import SyntaxToken
 
@@ -34,9 +33,11 @@ def main():
             subprocess.call("clear")
         else:
             for _ in range(120):
+
                 print('\n')
 
     def process_input():
+        print()
         nonlocal show_tree
         if term == '' or term.isspace() or term is None:
             print('You have to enter a valid term\n')
@@ -49,20 +50,30 @@ def main():
             clear()
             return
 
-        syntax_tree = SyntaxTree.parse(term, logger)
-        binder = Binder()
-        bound_expression = binder.bind_expression(syntax_tree.root)
-
+        syntax_tree = SyntaxTree.parse(term)
+        compilation = Compilation(syntax_tree)
+        result = compilation.evaluate()
+        diagnostic_bag = result.diagnostic_bag
         if show_tree:
             pretty_print(syntax_tree.root)
 
-        if syntax_tree.diagnostics or binder.diagnostics:
-            for diagnostic, level in itertools.chain(syntax_tree.diagnostics, binder.diagnostics):
-                logger.log(level, diagnostic)
+        if diagnostic_bag.diagnostics:
+            for diagnostic in diagnostic_bag.diagnostics:
+                print(colorama.Fore.RED)
+                prefix = term[:diagnostic.text_span.start]
+                error = term[diagnostic.text_span.start:diagnostic.text_span.end]
+                suffix = term[diagnostic.text_span.end:]
+                logger.log(
+                    diagnostic.level,
+                    f'{colorama.Fore.RED}{diagnostic}'
+                    f'\nTEXT:            '
+                    f'{colorama.Fore.GREEN}{prefix}'
+                    f'{colorama.Fore.RED}{error}'
+                    f'{colorama.Fore.GREEN}{suffix}{colorama.Style.RESET_ALL}'
+                )
+                print()
         else:
-            evaluator = Evaluator(bound_expression)
-            result = evaluator.evaluate()
-            print(result)
+            print(result.value)
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -73,4 +84,5 @@ def main():
 
 
 if __name__ == "__main__":
+    colorama.init()
     main()
