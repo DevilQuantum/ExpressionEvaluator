@@ -15,16 +15,19 @@ class Binder:
         self.diagnostic_bag = DiagnosticBag()
 
     def bind_expression(self, syntax):
-        if syntax.kind is SyntaxKind.LITERAL_EXPRESSION:
+        if syntax.kind is SyntaxKind.PARENTHESIZED_EXPRESSION:
+            return self._bind_parenthesized_expression(syntax)
+        elif syntax.kind is SyntaxKind.LITERAL_EXPRESSION:
             return self._bind_literal_expression(syntax)
         elif syntax.kind is SyntaxKind.UNARY_EXPRESSION:
             return self._bind_unary_expression(syntax)
         elif syntax.kind is SyntaxKind.BINARY_EXPRESSION:
             return self._bind_binary_expression(syntax)
-        elif syntax.kind is SyntaxKind.PARENTHESIZED_EXPRESSION:
-            return self.bind_expression(syntax.expression)
         else:
             raise Exception(f'Unexpected syntax {syntax.kind}')
+
+    def _bind_parenthesized_expression(self, syntax):
+        return self.bind_expression(syntax.expression)
 
     def _bind_literal_expression(self, syntax):
         value = 0 if syntax.value is None else syntax.value
@@ -52,7 +55,6 @@ class Binder:
             bound_left.type,
             bound_right.type
         )
-
         if bound_operator is None:
             self.diagnostic_bag.report_undefined_binary_operator(
                 syntax.operator_token.text_span,
