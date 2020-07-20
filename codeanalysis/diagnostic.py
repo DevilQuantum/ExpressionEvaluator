@@ -66,3 +66,13 @@ class DiagnosticBag:
             message,
             level
         )
+
+    def report_undefined_name(self, text_span, name, level):
+        message = (
+            f'Variable {name} does not exist'
+        )
+        self.report(
+            text_span,
+            message,
+            level
+        )

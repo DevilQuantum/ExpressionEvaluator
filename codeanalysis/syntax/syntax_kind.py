@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 
 class SyntaxKind(Enum):
-    # SyntaxToken:
+    # Simple SyntaxToken:
     BAD_TOKEN = auto()
     END_OF_FILE_TOKEN = auto()
     WHITE_SPACE_TOKEN = auto()
@@ -15,6 +15,9 @@ class SyntaxKind(Enum):
     CLOSE_PARENTHESIS_TOKEN = auto()
     IDENTIFIER_TOKEN = auto()
     BANG_TOKEN = auto()
+    EQUALS_TOKEN = auto()
+
+    # Double SyntaxToken:
     DOUBLE_EQUALS_TOKEN = auto()
     BANG_EQUALS_TOKEN = auto()
     DOUBLE_AMPERSAND_TOKEN = auto()
@@ -25,6 +28,8 @@ class SyntaxKind(Enum):
     BINARY_EXPRESSION = auto()
     UNARY_EXPRESSION = auto()
     PARENTHESIZED_EXPRESSION = auto()
+    ASSIGNMENT_EXPRESSION = auto()
+    NAME_EXPRESSION = auto()
 
     # Keyword:
     FALSE_KEYWORD = auto()

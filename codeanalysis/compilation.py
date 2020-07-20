@@ -8,10 +8,9 @@ class Compilation:
     def __init__(self, syntax_tree):
         self.syntax_tree = syntax_tree
 
-    def evaluate(self):
-        binder = Binder()
+    def evaluate(self, variables):
+        binder = Binder(variables)
         bound_expression = binder.bind_expression(self.syntax_tree.root)
-
         diagnostic_bag = self.syntax_tree.diagnostic_bag
         diagnostic_bag.diagnostics.extend(
             binder.diagnostic_bag.diagnostics
@@ -19,6 +18,6 @@ class Compilation:
         if diagnostic_bag.diagnostics:
             return EvaluationResult(diagnostic_bag, None)
         else:
-            evaluator = Evaluator(bound_expression)
+            evaluator = Evaluator(bound_expression, variables)
             value = evaluator.evaluate()
             return EvaluationResult(diagnostic_bag, value)

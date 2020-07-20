@@ -15,7 +15,7 @@ def main():
         print(indent, end='')
         print(marker, end='')
         print(node.kind.name, end='')
-        if type(node) is SyntaxToken:
+        if isinstance(node, SyntaxToken):
             if node.value is not None:
                 print(':   ' + str(node.value), end='')
             print()
@@ -52,7 +52,7 @@ def main():
 
         syntax_tree = SyntaxTree.parse(term)
         compilation = Compilation(syntax_tree)
-        result = compilation.evaluate()
+        result = compilation.evaluate(variables)
         diagnostic_bag = result.diagnostic_bag
         if show_tree:
             pretty_print(syntax_tree.root)
@@ -78,6 +78,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     show_tree = False
+    variables = {}
     while True:
         term = input('Enter a mathematical term\n')
         process_input()

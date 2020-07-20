@@ -172,6 +172,14 @@ class Lexer:
                 '!',
                 None
             )
+        elif self._current_char() == '=':
+            self._next()
+            return SyntaxToken(
+                SyntaxKind.EQUALS_TOKEN,
+                start_position,
+                '=',
+                None
+            )
         else:
             string = self._text[start_position]
             self.diagnostic_bag.report_bad_character(start_position, self._current_char(), logging.ERROR)
