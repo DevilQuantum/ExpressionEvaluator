@@ -9,7 +9,4 @@ class SyntaxToken(SyntaxNode):
         self.position = position
         self.text = text
         self.value = value
-
-    @property
-    def text_span(self):
-        return TextSpan(self.position, len(self.text))
+        self.text_span = TextSpan(self.position, len(self.text))

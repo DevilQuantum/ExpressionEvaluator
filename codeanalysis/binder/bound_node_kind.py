@@ -3,7 +3,8 @@ from enum import Enum
 
 class BoundNodeKind(Enum):
 
-    LITERAL_EXPRESSION = 1,
-    UNARY_EXPRESSION = 2,
+    LITERAL_EXPRESSION = 1
+    UNARY_EXPRESSION = 2
     BINARY_EXPRESSION = 3
-
+    VARIABLE_EXPRESSION = 4
+    ASSIGNMENT_EXPRESSION = 5
